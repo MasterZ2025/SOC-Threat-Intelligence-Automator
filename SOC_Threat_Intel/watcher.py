@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 
 # Rutas
 DIRECTORIO_ACTUAL = os.path.dirname(os.path.abspath(__file__))
-RUTA_REPO_LOCAL = os.path.join(DIRECTORIO_ACTUAL, "cvelistV5")
+RUTA_REPO_LOCAL = os.path.join(DIRECTORIO_ACTUAL, "cvelistV5/cves")
 ARCHIVO_ACTIVOS = os.path.join(DIRECTORIO_ACTUAL, "activos_cves.txt")
 ARCHIVO_SALIDA = os.path.join(DIRECTORIO_ACTUAL, "lista_cves.txt")
 DIAS_BUSQUEDA = 2  
@@ -21,9 +21,9 @@ while True:
         break
     print("[!] Opción inválida. Escribe 1 o 2.")
 
-print(f"\n[*] Sincronizando repositorio local en: {RUTA_REPO}...")
+print(f"\n[*] Sincronizando repositorio local en: {RUTA_REPO_LOCAL}...")
 try:
-    subprocess.run(["git", "-C", RUTA_REPO, "pull", "origin", "main"], 
+    subprocess.run(["git", "-C", RUTA_REPO_LOCAL, "pull", "origin", "main"], 
                    check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     print("[+] Sincronización completada.")
 except subprocess.CalledProcessError:
@@ -32,9 +32,9 @@ except FileNotFoundError:
     print("[!] Error: Git no encontrado o ruta incorrecta.")
     exit()
 
-delta_path = os.path.join(RUTA_REPO, "deltaLog.json")
+delta_path = os.path.join(RUTA_REPO_LOCAL, "deltaLog.json")
 if not os.path.exists(delta_path):
-    print(f"[!] Error: No se encontró 'deltaLog.json' en {RUTA_REPO}")
+    print(f"[!] Error: No se encontró 'deltaLog.json' en {RUTA_REPO_LOCAL}")
     exit()
 
 print(f"[*] Escaneando bitácora de cambios (deltaLog.json)...")
@@ -92,7 +92,7 @@ elif modo == "2":
         
         anio, secuencia = partes[1], partes[2]
         carpeta_xxx = secuencia[:-3] + "xxx" if len(secuencia) >= 4 else "0xxx"
-        ruta_cve_json = os.path.join(RUTA_REPO, "cves", anio, carpeta_xxx, f"{cve_id}.json")
+        ruta_cve_json = os.path.join(RUTA_REPO_LOCAL, "cves", anio, carpeta_xxx, f"{cve_id}.json")
         
         if not os.path.exists(ruta_cve_json): continue
             
